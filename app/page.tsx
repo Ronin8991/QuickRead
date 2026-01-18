@@ -105,6 +105,8 @@ const STRINGS = {
       soundTitle: "Sound & focus",
       soundBody:
         "For a softer atmosphere, use headphones. You can mute the music with the icon at the top right.",
+      rotateTitle: "Rotate your screen",
+      rotateBody: "On phones, rotate your screen horizontally for the best reading flow.",
       loadTitle: "Load a file",
       loadBody: "Upload a document or start with a short demo.",
       continue: "Continue",
@@ -163,6 +165,8 @@ const STRINGS = {
       soundTitle: "Suono & focus",
       soundBody:
         "Per un’atmosfera morbida, usa le cuffie. Puoi disattivare la musica con l’icona in alto a destra.",
+      rotateTitle: "Ruota lo schermo",
+      rotateBody: "Su mobile, ruota lo schermo in orizzontale per una lettura migliore.",
       loadTitle: "Carica un file",
       loadBody: "Carica un documento o avvia la demo.",
       continue: "Continua",
@@ -560,7 +564,7 @@ export default function Home() {
   };
 
   const goNext = () => {
-    setOnboardingStep((prev) => Math.min(prev + 1, 4));
+    setOnboardingStep((prev) => Math.min(prev + 1, 5));
   };
 
   const goPrev = () => {
@@ -661,6 +665,18 @@ export default function Home() {
           )}
 
           {onboardingStep === 4 && (
+            <div className="slide">
+              <h2>{t.onboarding.rotateTitle}</h2>
+              <p>{t.onboarding.rotateBody}</p>
+              <div className="slide-actions">
+                <button className="primary" onClick={goNext}>
+                  {t.onboarding.continue}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {onboardingStep === 5 && (
             <div className="slide">
               <h2>{t.onboarding.loadTitle}</h2>
               <p>{t.onboarding.loadBody}</p>
