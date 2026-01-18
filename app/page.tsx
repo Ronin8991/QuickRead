@@ -87,8 +87,8 @@ async function parseEpub(file: File): Promise<string> {
   await book.ready;
 
   const parts: string[] = [];
-  const spineItems = book?.spine?.spineItems ?? [];
-  for (const item of spineItems) {
+  const spineItems = (book as any)?.spine?.spineItems ?? [];
+  for (const item of spineItems as any[]) {
     try {
       await item.load(book.load.bind(book));
       const text = item?.document?.documentElement?.textContent ?? "";

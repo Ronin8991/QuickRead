@@ -19,7 +19,6 @@ export const metadata: Metadata = {
   description: "RSVP reading experience for PDFs, books, and docs.",
   applicationName: "QuickRead",
   metadataBase: new URL("https://quickread.nervapp.it"),
-  themeColor: "#f7f1e6",
   icons: {
     icon: "/icon.svg"
   },
@@ -30,6 +29,10 @@ export const metadata: Metadata = {
     siteName: "QuickRead",
     type: "website"
   }
+};
+
+export const viewport = {
+  themeColor: "#f7f1e6"
 };
 
 export default function RootLayout({
