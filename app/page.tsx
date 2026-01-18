@@ -37,6 +37,21 @@ function splitWord(word: string, pivotIndex: number) {
   };
 }
 
+function getWordDelay(word: string, wpm: number) {
+  const base = Math.max(60000 / Math.max(wpm, 1), 40);
+  const trimmed = word.trim();
+  if (!trimmed) return base;
+
+  let pause = 0;
+  if (/[.!?]$/.test(trimmed)) pause += 320;
+  if (/[,:;]$/.test(trimmed)) pause += 180;
+  if (/—|--/.test(trimmed)) pause += 160;
+  const extraLength = Math.max(trimmed.length - 6, 0);
+  pause += extraLength * 14;
+
+  return base + pause;
+}
+
 async function parsePdf(file: File): Promise<string> {
   const buffer = await file.arrayBuffer();
   const pdfjs = await import("pdfjs-dist/legacy/build/pdf");
@@ -150,7 +165,7 @@ export default function Home() {
       return;
     }
 
-    const delay = Math.max(60000 / wpm, 40);
+    const delay = getWordDelay(displayWord, wpm);
     timerRef.current = window.setTimeout(() => {
       setCurrentIndex((prev) => {
         if (prev + 1 >= words.length) {

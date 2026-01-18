@@ -16,7 +16,20 @@ const body = Space_Grotesk({
 
 export const metadata: Metadata = {
   title: "QuickRead",
-  description: "RSVP reading experience for PDFs and more."
+  description: "RSVP reading experience for PDFs, books, and docs.",
+  applicationName: "QuickRead",
+  metadataBase: new URL("https://quickread.nervapp.it"),
+  themeColor: "#f7f1e6",
+  icons: {
+    icon: "/icon.svg"
+  },
+  openGraph: {
+    title: "QuickRead",
+    description: "RSVP reading experience for PDFs, books, and docs.",
+    url: "https://quickread.nervapp.it",
+    siteName: "QuickRead",
+    type: "website"
+  }
 };
 
 export default function RootLayout({

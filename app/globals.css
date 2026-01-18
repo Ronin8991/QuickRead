@@ -212,6 +212,48 @@ main {
   line-height: 1.5;
 }
 
+.loading-screen {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(140deg, #f7f1e6 0%, #f4efe8 45%, #f7f1e6 100%);
+}
+
+.loading-card {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 24px;
+  padding: 28px 34px;
+  display: grid;
+  gap: 10px;
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+.loading-pulse {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ffb6b0 0%, #db3b2f 55%, #b32b22 100%);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.75;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.9);
+    opacity: 0.8;
+  }
+}
+
 @media (max-width: 720px) {
   .reader {
     min-height: 52vh;
