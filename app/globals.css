@@ -7,6 +7,37 @@
   --panel: rgba(255, 255, 255, 0.78);
   --panel-border: rgba(0, 0, 0, 0.08);
   --shadow: 0 24px 80px rgba(27, 27, 27, 0.12);
+  --word-scale: 11vw;
+  --bg-grad-1: #f5dcbf;
+  --bg-grad-2: #f0f5ff;
+  --bg-grad-3: #f4efe8;
+}
+
+.theme-dark {
+  --bg: #2d2f33;
+  --bg-ink: #f3eee4;
+  --ink-muted: #c6c0b5;
+  --accent: #ff6a5a;
+  --accent-soft: rgba(255, 106, 90, 0.4);
+  --panel: rgba(35, 37, 41, 0.88);
+  --panel-border: rgba(255, 255, 255, 0.08);
+  --shadow: 0 28px 90px rgba(0, 0, 0, 0.35);
+  --bg-grad-1: rgba(58, 60, 66, 0.9);
+  --bg-grad-2: rgba(44, 46, 52, 0.9);
+  --bg-grad-3: #2b2d31;
+}
+
+.theme-low-contrast {
+  --bg: #f7f1e6;
+  --bg-ink: #2a2a2a;
+  --ink-muted: #6a6a6a;
+  --accent: #c9493f;
+  --accent-soft: #f0c1bb;
+  --panel: #f3e7d5;
+  --panel-border: rgba(0, 0, 0, 0.06);
+  --bg-grad-1: #f0e0c9;
+  --bg-grad-2: #f6efe4;
+  --bg-grad-3: #f2e6d6;
 }
 
 * {
@@ -24,9 +55,9 @@ body {
 }
 
 body {
-  background-image: radial-gradient(circle at top left, #f5dcbf 0%, transparent 45%),
-    radial-gradient(circle at 70% 20%, #f0f5ff 0%, transparent 50%),
-    linear-gradient(140deg, #f7f1e6 0%, #f4efe8 45%, #f7f1e6 100%);
+  background-image: radial-gradient(circle at top left, var(--bg-grad-1) 0%, transparent 45%),
+    radial-gradient(circle at 70% 20%, var(--bg-grad-2) 0%, transparent 50%),
+    linear-gradient(140deg, var(--bg) 0%, var(--bg-grad-3) 45%, var(--bg) 100%);
 }
 
 button,
@@ -149,7 +180,7 @@ main {
   align-items: center;
   font-family: var(--font-display), serif;
   font-weight: 600;
-  font-size: clamp(38px, 11vw, 120px);
+  font-size: clamp(38px, var(--word-scale), 140px);
   letter-spacing: -0.02em;
   line-height: 1;
   white-space: nowrap;

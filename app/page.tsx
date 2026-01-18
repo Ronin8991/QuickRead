@@ -133,6 +133,7 @@ export default function Home() {
   const [fixedPivot, setFixedPivot] = useState(DEFAULT_PIVOT);
   const [wordScale, setWordScale] = useState(DEFAULT_SCALE);
   const [pivotOffset, setPivotOffset] = useState(0);
+  const [theme, setTheme] = useState<"light" | "dark" | "low">("light");
 
   const wordRef = useRef<HTMLSpanElement | null>(null);
   const timerRef = useRef<number | null>(null);
@@ -197,6 +198,15 @@ export default function Home() {
     const pivotWidth = ctx.measureText(pivot).width;
     setPivotOffset(leftWidth + pivotWidth / 2);
   }, [displayWord, left, pivot, wordScale]);
+
+  useEffect(() => {
+    document.body.classList.remove("theme-dark", "theme-low-contrast");
+    if (theme === "dark") {
+      document.body.classList.add("theme-dark");
+    } else if (theme === "low") {
+      document.body.classList.add("theme-low-contrast");
+    }
+  }, [theme]);
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -306,14 +316,13 @@ export default function Home() {
         {error && <div className="notice">{error}</div>}
       </section>
 
-      <section className="panel reader">
+      <section className="panel reader" style={{ ["--word-scale" as any]: `${wordScale}vw` }}>
         <div className="reader-line" aria-hidden="true" />
         <span
           ref={wordRef}
           className="reader-word"
           style={{
-            transform: `translateX(${-pivotOffset}px)`,
-            fontSize: `clamp(38px, ${wordScale}vw, 140px)`
+            transform: `translateX(${-pivotOffset}px)`
           }}
         >
           <span className="reader-left">{left}</span>
@@ -372,6 +381,18 @@ export default function Home() {
               onChange={(event) => setFixedPivot(Number(event.target.value))}
             />
             <div>Index {fixedPivot + 1}</div>
+          </div>
+          <div className="control">
+            <label htmlFor="theme">Theme</label>
+            <select
+              id="theme"
+              value={theme}
+              onChange={(event) => setTheme(event.target.value as "light" | "dark" | "low")}
+            >
+              <option value="light">Light</option>
+              <option value="dark">Dark</option>
+              <option value="low">Low contrast</option>
+            </select>
           </div>
         </div>
 
