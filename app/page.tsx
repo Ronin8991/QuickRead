@@ -65,7 +65,7 @@ async function parsePdf(file: File): Promise<string> {
     const page = await doc.getPage(i);
     const content = await page.getTextContent();
     const pageText = content.items
-      .map((item) => ("str" in item ? item.str : ""))
+      .map((item: any) => ("str" in item ? item.str : ""))
       .join(" ");
     text += ` ${pageText}`;
   }
