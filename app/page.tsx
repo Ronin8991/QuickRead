@@ -54,7 +54,8 @@ function getWordDelay(word: string, wpm: number) {
 
 async function parsePdf(file: File): Promise<string> {
   const buffer = await file.arrayBuffer();
-  const pdfjs = await import("pdfjs-dist/legacy/build/pdf");
+  const pdfjsModule = await import("pdfjs-dist/legacy/build/pdf");
+  const pdfjs = (pdfjsModule as { default?: any }).default ?? pdfjsModule;
   pdfjs.GlobalWorkerOptions.workerSrc =
     "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.js";
 
