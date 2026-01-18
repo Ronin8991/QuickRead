@@ -38,6 +38,7 @@ type SavedSettings = {
   theme: Theme;
   lang: Lang;
   isMuted: boolean;
+  demoText?: { en: string; it: string };
 };
 
 type SavedSession = {
@@ -293,6 +294,10 @@ export default function Home() {
   const [onboardingStep, setOnboardingStep] = useState(0);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
+  const [demoText, setDemoText] = useState<{ en: string; it: string }>({
+    en: DEMO_TEXT.en,
+    it: DEMO_TEXT.it
+  });
 
   const wordRef = useRef<HTMLSpanElement | null>(null);
   const timerRef = useRef<number | null>(null);
@@ -300,6 +305,7 @@ export default function Home() {
 
   const t = STRINGS[lang];
   const displayWord = words[currentIndex] ?? "";
+  const hasSession = Boolean(rawText && words.length > 0);
 
   const pivotIndex = useMemo(
     () => pivotForWord(displayWord, pivotMode, fixedPivot),
@@ -407,6 +413,12 @@ export default function Home() {
           setTheme(parsed.theme ?? "light");
           setLang(parsed.lang ?? "en");
           setIsMuted(parsed.isMuted ?? true);
+          if (parsed.demoText) {
+            setDemoText({
+              en: parsed.demoText.en ?? DEMO_TEXT.en,
+              it: parsed.demoText.it ?? DEMO_TEXT.it
+            });
+          }
         }
 
         const savedSession = localStorage.getItem(STORAGE_KEYS.session);
@@ -438,10 +450,11 @@ export default function Home() {
       wordScale,
       theme,
       lang,
-      isMuted
+      isMuted,
+      demoText
     };
     localStorage.setItem(STORAGE_KEYS.settings, JSON.stringify(payload));
-  }, [consent, wpm, pivotMode, fixedPivot, wordScale, theme, lang, isMuted]);
+  }, [consent, wpm, pivotMode, fixedPivot, wordScale, theme, lang, isMuted, demoText]);
 
   useEffect(() => {
     if (consent !== "granted") return;
@@ -506,7 +519,7 @@ export default function Home() {
   };
 
   const useDemoText = () => {
-    const demo = DEMO_TEXT[lang];
+    const demo = demoText[lang];
     const normalized = normalizeText(demo);
     const nextWords = normalized.split(" ");
     setFileName("Demo");
@@ -653,7 +666,7 @@ export default function Home() {
               <p>{t.onboarding.loadBody}</p>
               <div className="demo-block">
                 <div className="demo-title">{t.demoTitle}</div>
-                <div className="demo-text">{DEMO_TEXT[lang]}</div>
+                <div className="demo-text">{demoText[lang]}</div>
                 <button className="ghost" onClick={useDemoText}>
                   {t.useDemo}
                 </button>
@@ -757,6 +770,14 @@ export default function Home() {
           <span className="reader-pivot">{pivot}</span>
           <span className="reader-right">{right}</span>
         </span>
+        <div className="progress-track" aria-hidden="true">
+          <div className="progress-fill" style={{ width: `${percent}%` }} />
+        </div>
+        {hasSession && !isPlaying && (
+          <button className="resume-button" onClick={togglePlay}>
+            {t.play}
+          </button>
+        )}
       </section>
 
       <footer className="signature">
@@ -906,6 +927,30 @@ export default function Home() {
                   >
                     Italiano
                   </button>
+                </div>
+              </div>
+
+              <div className="settings-section">
+                <div className="section-title">{t.demoTitle}</div>
+                <div className="setting">
+                  <label htmlFor="demo-en">Demo (EN)</label>
+                  <textarea
+                    id="demo-en"
+                    value={demoText.en}
+                    onChange={(event) =>
+                      setDemoText((prev) => ({ ...prev, en: event.target.value }))
+                    }
+                  />
+                </div>
+                <div className="setting">
+                  <label htmlFor="demo-it">Demo (IT)</label>
+                  <textarea
+                    id="demo-it"
+                    value={demoText.it}
+                    onChange={(event) =>
+                      setDemoText((prev) => ({ ...prev, it: event.target.value }))
+                    }
+                  />
                 </div>
               </div>
 
