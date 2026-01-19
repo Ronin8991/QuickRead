@@ -48,8 +48,8 @@ type SavedSession = {
 };
 
 const DEMO_TEXT = {
-  en: "QuickRead is a calm demonstration. Keep your gaze on the red pivot letter while words flow. Adjust speed, size, and theme in settings.",
-  it: "QuickRead è una dimostrazione calma. Tieni lo sguardo sulla lettera rossa mentre le parole scorrono. Regola velocità, dimensione e tema nelle impostazioni."
+  en: "Welcome to a slow, focused reading rhythm. This demo is designed to be long enough for you to settle into the flow, breathe deeper, and feel the cadence. Keep your gaze anchored on the red pivot letter. Let the words arrive and leave, almost like a quiet tide. The goal is not to chase the words with your eyes, but to hold your attention steady and allow comprehension to unfold. Notice how the surrounding letters blur softly while the pivot remains crisp. That micro‑focus is the center of the experience.\n\nAs you continue, allow your shoulders to drop. The screen is your window, not your task list. This is a demonstration, a moment to practice clarity. You can adjust the speed whenever you want, but try to stay slightly slower than your maximum. A calm pace can feel like a small meditation: each word is a breath, each sentence a longer exhale. Let the punctuation give you a pause. When the text is smooth, your mind can settle into a stable rhythm instead of rushing ahead.\n\nIf you are reading on a phone, rotate it horizontally. The word will become large, spacious, and easier to hold in view. This simple shift reduces eye movement and makes the center letter feel like a fixed anchor. From that anchor, the word becomes a single shape, not a cluster of separate letters. You may notice your awareness expand just a little — the feeling of reading without strain.\n\nNow imagine using this with a book you love. The experience becomes a focused corridor: no distractions, no clutter, only the word you need right now. Each word appears, performs its moment of meaning, and then moves on. The red pivot is like a guiding light. You can also play with themes: a darker background can be soothing at night, while low contrast can feel softer for long sessions. Choose what makes your eyes relax.\n\nRemember, this is just a demo. Your actual files can be loaded from the settings panel. There is no upload to a server, no saving unless you allow it. QuickRead is a small space to practice attention. If your mind drifts, gently return to the red letter. If you need to pause, simply tap the screen on mobile or press the spacebar on a keyboard. The flow will wait.\n\nBreathe once more. Let your focus settle. The next word will arrive on time. And the next. And the next.",
+  it: "Benvenuto in un ritmo di lettura lento e concentrato. Questa demo è pensata per essere abbastanza lunga da permetterti di entrare nel flusso, respirare più a fondo e sentire la cadenza. Tieni lo sguardo ancorato alla lettera pivot rossa. Lascia che le parole arrivino e se ne vadano, come una marea silenziosa. L’obiettivo non è inseguire le parole con gli occhi, ma mantenere l’attenzione stabile e permettere alla comprensione di emergere. Nota come le lettere intorno si sfumano mentre la pivot resta nitida. Quel micro‑focus è il centro dell’esperienza.\n\nMan mano che continui, lascia rilassare le spalle. Lo schermo è la tua finestra, non la tua lista di cose da fare. Questa è una dimostrazione, un momento per esercitare la chiarezza. Puoi regolare la velocità quando vuoi, ma prova a restare leggermente sotto il tuo massimo. Un ritmo calmo può sembrare una piccola meditazione: ogni parola è un respiro, ogni frase un’espirazione più lunga. Lascia che la punteggiatura crei una pausa. Quando il testo è fluido, la mente può stabilizzarsi invece di correre avanti.\n\nSe stai leggendo da telefono, ruotalo in orizzontale. La parola diventa grande, spaziosa, più semplice da tenere in vista. Questo piccolo cambiamento riduce il movimento degli occhi e rende la lettera centrale un’ancora fissa. Da quell’ancora la parola diventa una sola forma, non un insieme di lettere separate. Potresti notare che la tua percezione si amplia leggermente — la sensazione di leggere senza sforzo.\n\nOra immagina di usare questo con un libro che ami. L’esperienza diventa un corridoio di attenzione: niente distrazioni, nessun ingombro, solo la parola di cui hai bisogno adesso. Ogni parola appare, esprime il suo significato, poi passa oltre. La pivot rossa è come una luce guida. Puoi anche giocare con i temi: uno sfondo scuro può essere rassicurante di notte, mentre il basso contrasto può risultare più morbido nelle sessioni lunghe. Scegli ciò che rilassa i tuoi occhi.\n\nRicorda, questa è solo una demo. I tuoi file reali possono essere caricati dal pannello impostazioni. Non c’è upload su server, nessun salvataggio se non lo consenti. QuickRead è un piccolo spazio per allenare l’attenzione. Se la mente si distrae, torna con gentilezza alla lettera rossa. Se hai bisogno di una pausa, tocca lo schermo su mobile o premi la barra spaziatrice sulla tastiera. Il flusso aspetterà.\n\nRespira ancora. Lascia che la concentrazione si stabilizzi. La prossima parola arriverà puntuale. E poi un’altra. E poi un’altra."
 } as const;
 
 const STRINGS = {
@@ -105,6 +105,9 @@ const STRINGS = {
       soundTitle: "Sound & focus",
       soundBody:
         "For a softer atmosphere, use headphones. You can mute the music with the icon at the top right.",
+      controlTitle: "Play & pause",
+      controlBody:
+        "On desktop press the spacebar. On mobile, tap the reading area to play or pause.",
       rotateTitle: "Rotate your screen",
       rotateBody: "On phones, rotate your screen horizontally for the best reading flow.",
       loadTitle: "Load a file",
@@ -165,6 +168,9 @@ const STRINGS = {
       soundTitle: "Suono & focus",
       soundBody:
         "Per un’atmosfera morbida, usa le cuffie. Puoi disattivare la musica con l’icona in alto a destra.",
+      controlTitle: "Play & pausa",
+      controlBody:
+        "Su desktop premi la barra spaziatrice. Su mobile tocca l’area di lettura per avviare o mettere in pausa.",
       rotateTitle: "Ruota lo schermo",
       rotateBody: "Su mobile, ruota lo schermo in orizzontale per una lettura migliore.",
       loadTitle: "Carica un file",
@@ -564,7 +570,7 @@ export default function Home() {
   };
 
   const goNext = () => {
-    setOnboardingStep((prev) => Math.min(prev + 1, 5));
+    setOnboardingStep((prev) => Math.min(prev + 1, 6));
   };
 
   const goPrev = () => {
@@ -666,6 +672,18 @@ export default function Home() {
 
           {onboardingStep === 4 && (
             <div className="slide">
+              <h2>{t.onboarding.controlTitle}</h2>
+              <p>{t.onboarding.controlBody}</p>
+              <div className="slide-actions">
+                <button className="primary" onClick={goNext}>
+                  {t.onboarding.continue}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {onboardingStep === 5 && (
+            <div className="slide">
               <h2>{t.onboarding.rotateTitle}</h2>
               <p>{t.onboarding.rotateBody}</p>
               <div className="slide-actions">
@@ -676,7 +694,7 @@ export default function Home() {
             </div>
           )}
 
-          {onboardingStep === 5 && (
+          {onboardingStep === 6 && (
             <div className="slide">
               <h2>{t.onboarding.loadTitle}</h2>
               <p>{t.onboarding.loadBody}</p>
@@ -775,7 +793,13 @@ export default function Home() {
         </div>
       </header>
 
-      <section className="reader-stage" style={{ ["--word-scale" as any]: `${wordScale}vw` }}>
+      <section
+        className="reader-stage"
+        style={{ ["--word-scale" as any]: `${wordScale}vw` }}
+        onClick={togglePlay}
+        role="button"
+        aria-label={isPlaying ? t.pause : t.play}
+      >
         <div className="reader-line" aria-hidden="true" />
         <span
           ref={wordRef}
@@ -790,7 +814,13 @@ export default function Home() {
           <div className="progress-fill" style={{ width: `${percent}%` }} />
         </div>
         {hasSession && !isPlaying && (
-          <button className="resume-button" onClick={togglePlay}>
+          <button
+            className="resume-button"
+            onClick={(event) => {
+              event.stopPropagation();
+              togglePlay();
+            }}
+          >
             {t.play}
           </button>
         )}
