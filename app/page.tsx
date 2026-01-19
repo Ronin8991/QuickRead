@@ -1221,13 +1221,25 @@ export default function Home() {
                       className={consent === "denied" ? "primary" : "ghost"}
                       onClick={() => handleConsent("denied")}
                     >
-                      {t.onboarding.deny}
+                    {t.onboarding.deny}
                     </button>
                   </div>
                   {consent === "denied" && (
                     <div className="section-note">{t.cookiesOff}</div>
                   )}
                 </div>
+                <button
+                  className="ghost"
+                  onClick={() => {
+                    localStorage.removeItem(STORAGE_KEYS.consent);
+                    localStorage.removeItem(STORAGE_KEYS.onboarded);
+                    localStorage.removeItem(STORAGE_KEYS.settings);
+                    localStorage.removeItem(STORAGE_KEYS.session);
+                    window.location.reload();
+                  }}
+                >
+                  Reset cookies & memory
+                </button>
                 <button
                   className="ghost"
                   onClick={() => {
