@@ -819,13 +819,6 @@ export default function Home() {
             <div className="slide">
               <h2>{t.onboarding.loadTitle}</h2>
               <p>{t.onboarding.loadBody}</p>
-              <div className="demo-block">
-                <div className="demo-title">{t.demoTitle}</div>
-                <div className="demo-text">{demoText[lang]}</div>
-                <button className="ghost" onClick={useDemoText}>
-                  {t.useDemo}
-                </button>
-              </div>
               <div className="slide-actions">
                 <label className="file-button">
                   <input
@@ -835,6 +828,9 @@ export default function Home() {
                   />
                   {t.fileInput}
                 </label>
+                <button className="ghost" onClick={useDemoText}>
+                  {t.useDemo}
+                </button>
                 <button
                   className="primary"
                   onClick={() => {
