@@ -413,6 +413,22 @@ export default function Home() {
     }
   }, [theme]);
 
+  const startResize = (event: React.PointerEvent<HTMLButtonElement>) => {
+    if (!isAdjustingBox) return;
+    const dir = event.currentTarget.dataset.dir;
+    if (!dir) return;
+    event.preventDefault();
+    event.stopPropagation();
+    resizeRef.current = {
+      dir,
+      startX: event.clientX,
+      startY: event.clientY,
+      startWidth: boxSize.width,
+      startHeight: boxSize.height
+    };
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
   useEffect(() => {
     const handleMove = (event: PointerEvent) => {
       if (!resizeRef.current) return;
@@ -420,7 +436,7 @@ export default function Home() {
       const dx = ((event.clientX - startX) / window.innerWidth) * 100;
       const dy = ((event.clientY - startY) / window.innerHeight) * 100;
 
-      setBoxSize((prev) => {
+      setBoxSize(() => {
         let width = startWidth;
         let height = startHeight;
 
@@ -438,41 +454,15 @@ export default function Home() {
 
     const handleUp = () => {
       resizeRef.current = null;
-      window.removeEventListener("pointermove", handleMove);
-      window.removeEventListener("pointerup", handleUp);
     };
 
-    if (!isAdjustingBox) return;
-
-    const handleDown = (event: PointerEvent) => {
-      const target = event.target as HTMLElement;
-      const dir = target?.dataset?.dir;
-      if (!dir) return;
-      event.preventDefault();
-      resizeRef.current = {
-        dir,
-        startX: event.clientX,
-        startY: event.clientY,
-        startWidth: boxSize.width,
-        startHeight: boxSize.height
-      };
-      window.addEventListener("pointermove", handleMove);
-      window.addEventListener("pointerup", handleUp);
-    };
-
-    const box = boxRef.current;
-    if (box) {
-      box.addEventListener("pointerdown", handleDown);
-    }
-
+    window.addEventListener("pointermove", handleMove);
+    window.addEventListener("pointerup", handleUp);
     return () => {
-      if (box) {
-        box.removeEventListener("pointerdown", handleDown);
-      }
       window.removeEventListener("pointermove", handleMove);
       window.removeEventListener("pointerup", handleUp);
     };
-  }, [isAdjustingBox, boxSize.width, boxSize.height]);
+  }, []);
 
   useEffect(() => {
     const updateFont = () => {
@@ -800,6 +790,12 @@ export default function Home() {
               <h2>{t.onboarding.boxTitle}</h2>
               <p>{t.onboarding.boxBody}</p>
               <div className="slide-actions">
+                <button
+                  className={isAdjustingBox ? "primary" : "ghost"}
+                  onClick={() => setIsAdjustingBox((prev) => !prev)}
+                >
+                  {isAdjustingBox ? "Done" : "Adjust"}
+                </button>
                 <button className="primary" onClick={goNext}>
                   {t.onboarding.continue}
                 </button>
@@ -960,14 +956,14 @@ export default function Home() {
           )}
           {isAdjustingBox && (
             <div className="handle-layer" aria-hidden="true">
-              <button className="handle handle-n" data-dir="n" />
-              <button className="handle handle-s" data-dir="s" />
-              <button className="handle handle-e" data-dir="e" />
-              <button className="handle handle-w" data-dir="w" />
-              <button className="handle handle-ne" data-dir="ne" />
-              <button className="handle handle-nw" data-dir="nw" />
-              <button className="handle handle-se" data-dir="se" />
-              <button className="handle handle-sw" data-dir="sw" />
+              <button className="handle handle-n" data-dir="n" onPointerDown={startResize} />
+              <button className="handle handle-s" data-dir="s" onPointerDown={startResize} />
+              <button className="handle handle-e" data-dir="e" onPointerDown={startResize} />
+              <button className="handle handle-w" data-dir="w" onPointerDown={startResize} />
+              <button className="handle handle-ne" data-dir="ne" onPointerDown={startResize} />
+              <button className="handle handle-nw" data-dir="nw" onPointerDown={startResize} />
+              <button className="handle handle-se" data-dir="se" onPointerDown={startResize} />
+              <button className="handle handle-sw" data-dir="sw" onPointerDown={startResize} />
             </div>
           )}
         </div>

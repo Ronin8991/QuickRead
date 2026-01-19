@@ -233,14 +233,15 @@ select {
 
 .handle {
   position: absolute;
-  width: 16px;
-  height: 16px;
+  width: 22px;
+  height: 22px;
   border-radius: 999px;
   background: var(--accent);
   border: none;
   pointer-events: auto;
   cursor: pointer;
   opacity: 0.9;
+  touch-action: none;
 }
 
 .handle-n {
