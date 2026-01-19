@@ -1089,9 +1089,15 @@ export default function Home() {
                       max={6}
                       value={fixedPivot}
                       onChange={(event) => setFixedPivot(Number(event.target.value))}
-                    />
-                    <div className="setting-value">{fixedPivot + 1}</div>
-                  </div>
+                  />
+                  <div className="setting-value">{fixedPivot + 1}</div>
+                </div>
+                </div>
+              </details>
+
+              <details className="settings-section">
+                <summary className="section-summary">{t.theme}</summary>
+                <div className="section-body">
                   <div className="setting">
                     <label htmlFor="theme">{t.theme}</label>
                     <select
