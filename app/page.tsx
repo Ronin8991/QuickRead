@@ -986,288 +986,306 @@ export default function Home() {
               </button>
             </div>
 
-            <div className="settings-grid">
-              <div className="settings-section">
-                <div className="section-title">{t.fileInput}</div>
-                <div className="section-note">{t.fileHint}</div>
-                <label className="file-button">
-                  <input
-                    type="file"
-                    accept=".pdf,.docx,.txt,.md,.epub,.text"
-                    onChange={onFileChange}
-                  />
-                  {isLoading ? "Loading..." : t.fileInput}
-                </label>
-                <button className="ghost" onClick={useDemoText}>
-                  {t.useDemo}
-                </button>
-                <div className="status-row">
-                  <strong>{t.status}:</strong>
-                  <span>
-                    {fileName
-                      ? `${t.statusText}: ${fileName}`
-                      : t.noFile}
-                  </span>
+            <div className="settings-list">
+              <details className="settings-section">
+                <summary className="section-summary">{t.fileInput}</summary>
+                <div className="section-body">
+                  <div className="section-note">{t.fileHint}</div>
+                  <label className="file-button">
+                    <input
+                      type="file"
+                      accept=".pdf,.docx,.txt,.md,.epub,.text"
+                      onChange={onFileChange}
+                    />
+                    {isLoading ? "Loading..." : t.fileInput}
+                  </label>
+                  <button className="ghost" onClick={useDemoText}>
+                    {t.useDemo}
+                  </button>
+                  <div className="status-row">
+                    <strong>{t.status}:</strong>
+                    <span>
+                      {fileName
+                        ? `${t.statusText}: ${fileName}`
+                        : t.noFile}
+                    </span>
+                  </div>
+                  {error && <div className="error-text">{error}</div>}
                 </div>
-                {error && <div className="error-text">{error}</div>}
-              </div>
+              </details>
 
-              <div className="settings-section">
-                <div className="section-title">{t.playback}</div>
-                <div className="button-row">
-                  <button className="primary" onClick={togglePlay}>
-                    {isPlaying ? t.pause : t.play}
-                  </button>
-                  <button className="ghost" onClick={restart}>
-                    {t.restart}
-                  </button>
-                  <button className="ghost" onClick={() => jump(-1)}>
-                    {t.back}
-                  </button>
-                  <button className="ghost" onClick={() => jump(1)}>
-                    {t.forward}
-                  </button>
+              <details className="settings-section">
+                <summary className="section-summary">{t.playback}</summary>
+                <div className="section-body">
+                  <div className="button-row">
+                    <button className="primary" onClick={togglePlay}>
+                      {isPlaying ? t.pause : t.play}
+                    </button>
+                    <button className="ghost" onClick={restart}>
+                      {t.restart}
+                    </button>
+                    <button className="ghost" onClick={() => jump(-1)}>
+                      {t.back}
+                    </button>
+                    <button className="ghost" onClick={() => jump(1)}>
+                      {t.forward}
+                    </button>
+                  </div>
+                  <div className="status-row">
+                    <strong>{t.progress}:</strong>
+                    <span>
+                      {words.length
+                        ? `${currentIndex + 1} / ${words.length} · ${percent}%`
+                        : "0 / 0"}
+                    </span>
+                  </div>
+                  <div className="setting">
+                    <label htmlFor="wpm">{t.wpm}</label>
+                    <input
+                      id="wpm"
+                      type="range"
+                      min={120}
+                      max={900}
+                      value={wpm}
+                      onChange={(event) => setWpm(Number(event.target.value))}
+                    />
+                    <div className="setting-value">{wpm} wpm</div>
+                  </div>
+                  <div className="setting">
+                    <label htmlFor="scale">{t.wordSize}</label>
+                    <input
+                      id="scale"
+                      type="range"
+                      min={6}
+                      max={16}
+                      value={wordScale}
+                      onChange={(event) => setWordScale(Number(event.target.value))}
+                    />
+                    <div className="setting-value">{wordScale} vw</div>
+                  </div>
                 </div>
-                <div className="status-row">
-                  <strong>{t.progress}:</strong>
-                  <span>
-                    {words.length
-                      ? `${currentIndex + 1} / ${words.length} · ${percent}%`
-                      : "0 / 0"}
-                  </span>
-                </div>
-                <div className="setting">
-                  <label htmlFor="wpm">{t.wpm}</label>
-                  <input
-                    id="wpm"
-                    type="range"
-                    min={120}
-                    max={900}
-                    value={wpm}
-                    onChange={(event) => setWpm(Number(event.target.value))}
-                  />
-                  <div className="setting-value">{wpm} wpm</div>
-                </div>
-                <div className="setting">
-                  <label htmlFor="scale">{t.wordSize}</label>
-                  <input
-                    id="scale"
-                    type="range"
-                    min={6}
-                    max={16}
-                    value={wordScale}
-                    onChange={(event) => setWordScale(Number(event.target.value))}
-                  />
-                  <div className="setting-value">{wordScale} vw</div>
-                </div>
-              </div>
+              </details>
 
-              <div className="settings-section">
-                <div className="section-title">{t.pivotMode}</div>
-                <div className="setting">
-                  <label htmlFor="pivot">{t.pivotMode}</label>
-                  <select
-                    id="pivot"
-                    value={pivotMode}
-                    onChange={(event) => setPivotMode(event.target.value as PivotMode)}
-                  >
-                    <option value="auto">{t.pivotAuto}</option>
-                    <option value="fixed">{t.pivotFixed}</option>
-                  </select>
+              <details className="settings-section">
+                <summary className="section-summary">{t.pivotMode}</summary>
+                <div className="section-body">
+                  <div className="setting">
+                    <label htmlFor="pivot">{t.pivotMode}</label>
+                    <select
+                      id="pivot"
+                      value={pivotMode}
+                      onChange={(event) => setPivotMode(event.target.value as PivotMode)}
+                    >
+                      <option value="auto">{t.pivotAuto}</option>
+                      <option value="fixed">{t.pivotFixed}</option>
+                    </select>
+                  </div>
+                  <div className="setting">
+                    <label htmlFor="pivotIndex">{t.pivotIndex}</label>
+                    <input
+                      id="pivotIndex"
+                      type="range"
+                      min={0}
+                      max={6}
+                      value={fixedPivot}
+                      onChange={(event) => setFixedPivot(Number(event.target.value))}
+                    />
+                    <div className="setting-value">{fixedPivot + 1}</div>
+                  </div>
+                  <div className="setting">
+                    <label htmlFor="theme">{t.theme}</label>
+                    <select
+                      id="theme"
+                      value={theme}
+                      onChange={(event) => setTheme(event.target.value as Theme)}
+                    >
+                      <option value="light">{t.themeLight}</option>
+                      <option value="dark">{t.themeDark}</option>
+                      <option value="low">{t.themeLow}</option>
+                    </select>
+                  </div>
                 </div>
-                <div className="setting">
-                  <label htmlFor="pivotIndex">{t.pivotIndex}</label>
-                  <input
-                    id="pivotIndex"
-                    type="range"
-                    min={0}
-                    max={6}
-                    value={fixedPivot}
-                    onChange={(event) => setFixedPivot(Number(event.target.value))}
-                  />
-                  <div className="setting-value">{fixedPivot + 1}</div>
-                </div>
-                <div className="setting">
-                  <label htmlFor="theme">{t.theme}</label>
-                  <select
-                    id="theme"
-                    value={theme}
-                    onChange={(event) => setTheme(event.target.value as Theme)}
-                  >
-                    <option value="light">{t.themeLight}</option>
-                    <option value="dark">{t.themeDark}</option>
-                    <option value="low">{t.themeLow}</option>
-                  </select>
-                </div>
-              </div>
+              </details>
 
-              <div className="settings-section">
-                <div className="section-title">{t.language}</div>
-                <div className="button-row">
-                  <button
-                    className={lang === "en" ? "primary" : "ghost"}
-                    onClick={() => setLang("en")}
-                  >
-                    English
-                  </button>
-                  <button
-                    className={lang === "it" ? "primary" : "ghost"}
-                    onClick={() => setLang("it")}
-                  >
-                    Italiano
-                  </button>
-                </div>
-              </div>
-
-              <div className="settings-section">
-                <div className="section-title">Reading box</div>
-                <div className="setting">
-                  <label>Resize box</label>
+              <details className="settings-section">
+                <summary className="section-summary">{t.language}</summary>
+                <div className="section-body">
                   <div className="button-row">
                     <button
-                      className={isAdjustingBox ? "primary" : "ghost"}
-                      onClick={() => setIsAdjustingBox((prev) => !prev)}
+                      className={lang === "en" ? "primary" : "ghost"}
+                      onClick={() => setLang("en")}
                     >
-                      {isAdjustingBox ? "Done" : "Adjust"}
+                      English
                     </button>
                     <button
-                      className="ghost"
-                      onClick={() => setBoxSize({ width: 70, height: 60 })}
+                      className={lang === "it" ? "primary" : "ghost"}
+                      onClick={() => setLang("it")}
                     >
-                      Reset
+                      Italiano
+                    </button>
+                  </div>
+                </div>
+              </details>
+
+              <details className="settings-section">
+                <summary className="section-summary">Reading box</summary>
+                <div className="section-body">
+                  <div className="setting">
+                    <label>Resize box</label>
+                    <div className="button-row">
+                      <button
+                        className={isAdjustingBox ? "primary" : "ghost"}
+                        onClick={() => setIsAdjustingBox((prev) => !prev)}
+                      >
+                        {isAdjustingBox ? "Done" : "Adjust"}
+                      </button>
+                      <button
+                        className="ghost"
+                        onClick={() => setBoxSize({ width: 70, height: 60 })}
+                      >
+                        Reset
+                      </button>
+                    </div>
+                    <div className="section-note">
+                      Drag the borders of the box on the main screen to fit your
+                      device.
+                    </div>
+                  </div>
+                  <div className="setting">
+                    <label htmlFor="boxWidth">Width</label>
+                    <input
+                      id="boxWidth"
+                      type="range"
+                      min={40}
+                      max={100}
+                      value={boxSize.width}
+                      onChange={(event) =>
+                        setBoxSize((prev) => ({
+                          ...prev,
+                          width: Number(event.target.value)
+                        }))
+                      }
+                    />
+                    <div className="setting-value">{boxSize.width} vw</div>
+                  </div>
+                  <div className="setting">
+                    <label htmlFor="boxHeight">Height</label>
+                    <input
+                      id="boxHeight"
+                      type="range"
+                      min={35}
+                      max={100}
+                      value={boxSize.height}
+                      onChange={(event) =>
+                        setBoxSize((prev) => ({
+                          ...prev,
+                          height: Number(event.target.value)
+                        }))
+                      }
+                    />
+                    <div className="setting-value">{boxSize.height} vh</div>
+                  </div>
+                </div>
+              </details>
+
+              <details className="settings-section">
+                <summary className="section-summary">{t.demoTitle}</summary>
+                <div className="section-body">
+                  <div className="setting">
+                    <label htmlFor="demo-en">Demo (EN)</label>
+                    <textarea
+                      id="demo-en"
+                      value={demoText.en}
+                      onChange={(event) =>
+                        setDemoText((prev) => ({ ...prev, en: event.target.value }))
+                      }
+                    />
+                  </div>
+                  <div className="setting">
+                    <label htmlFor="demo-it">Demo (IT)</label>
+                    <textarea
+                      id="demo-it"
+                      value={demoText.it}
+                      onChange={(event) =>
+                        setDemoText((prev) => ({ ...prev, it: event.target.value }))
+                      }
+                    />
+                  </div>
+                </div>
+              </details>
+
+              <details className="settings-section">
+                <summary className="section-summary">{t.cookiesTitle}</summary>
+                <div className="section-body">
+                  <div className="setting">
+                    <label>{t.cookiesAllow}</label>
+                    <div className="button-row">
+                      <button
+                        className={consent === "granted" ? "primary" : "ghost"}
+                        onClick={() => handleConsent("granted")}
+                      >
+                        {t.onboarding.allow}
+                      </button>
+                      <button
+                        className={consent === "denied" ? "primary" : "ghost"}
+                        onClick={() => handleConsent("denied")}
+                      >
+                        {t.onboarding.deny}
+                      </button>
+                    </div>
+                    {consent === "denied" && (
+                      <div className="section-note">{t.cookiesOff}</div>
+                    )}
+                  </div>
+                  <button
+                    className="ghost"
+                    onClick={() => {
+                      localStorage.removeItem(STORAGE_KEYS.consent);
+                      localStorage.removeItem(STORAGE_KEYS.onboarded);
+                      localStorage.removeItem(STORAGE_KEYS.settings);
+                      localStorage.removeItem(STORAGE_KEYS.session);
+                      window.location.reload();
+                    }}
+                  >
+                    Reset cookies & memory
+                  </button>
+                  <button
+                    className="ghost"
+                    onClick={() => {
+                      localStorage.removeItem(STORAGE_KEYS.session);
+                      setRawText("");
+                      setWords([]);
+                      setCurrentIndex(0);
+                      setFileName(null);
+                    }}
+                  >
+                    {t.clearSession}
+                  </button>
+                </div>
+              </details>
+
+              <details className="settings-section">
+                <summary className="section-summary">{t.musicTitle}</summary>
+                <div className="section-body">
+                  <div className="button-row">
+                    <button className="ghost" onClick={() => setMuteState(!isMuted)}>
+                      {isMuted ? t.unmute : t.mute}
                     </button>
                   </div>
                   <div className="section-note">
-                    Drag the borders of the box on the main screen to fit your
-                    device.
+                    <a href={MUSIC_CREDIT_URL} target="_blank" rel="noreferrer">
+                      {t.musicCredit}
+                    </a>
                   </div>
                 </div>
-                <div className="setting">
-                  <label htmlFor="boxWidth">Width</label>
-                  <input
-                    id="boxWidth"
-                    type="range"
-                    min={40}
-                    max={100}
-                    value={boxSize.width}
-                    onChange={(event) =>
-                      setBoxSize((prev) => ({
-                        ...prev,
-                        width: Number(event.target.value)
-                      }))
-                    }
-                  />
-                  <div className="setting-value">{boxSize.width} vw</div>
-                </div>
-                <div className="setting">
-                  <label htmlFor="boxHeight">Height</label>
-                  <input
-                    id="boxHeight"
-                    type="range"
-                    min={35}
-                    max={100}
-                    value={boxSize.height}
-                    onChange={(event) =>
-                      setBoxSize((prev) => ({
-                        ...prev,
-                        height: Number(event.target.value)
-                      }))
-                    }
-                  />
-                  <div className="setting-value">{boxSize.height} vh</div>
-                </div>
-              </div>
+              </details>
 
-              <div className="settings-section">
-                <div className="section-title">{t.demoTitle}</div>
-                <div className="setting">
-                  <label htmlFor="demo-en">Demo (EN)</label>
-                  <textarea
-                    id="demo-en"
-                    value={demoText.en}
-                    onChange={(event) =>
-                      setDemoText((prev) => ({ ...prev, en: event.target.value }))
-                    }
-                  />
+              <details className="settings-section">
+                <summary className="section-summary">{t.shortcuts}</summary>
+                <div className="section-body">
+                  <div className="section-note">{t.shortcutsText}</div>
                 </div>
-                <div className="setting">
-                  <label htmlFor="demo-it">Demo (IT)</label>
-                  <textarea
-                    id="demo-it"
-                    value={demoText.it}
-                    onChange={(event) =>
-                      setDemoText((prev) => ({ ...prev, it: event.target.value }))
-                    }
-                  />
-                </div>
-              </div>
-
-              <div className="settings-section">
-                <div className="section-title">{t.cookiesTitle}</div>
-                <div className="setting">
-                  <label>{t.cookiesAllow}</label>
-                  <div className="button-row">
-                    <button
-                      className={consent === "granted" ? "primary" : "ghost"}
-                      onClick={() => handleConsent("granted")}
-                    >
-                      {t.onboarding.allow}
-                    </button>
-                    <button
-                      className={consent === "denied" ? "primary" : "ghost"}
-                      onClick={() => handleConsent("denied")}
-                    >
-                    {t.onboarding.deny}
-                    </button>
-                  </div>
-                  {consent === "denied" && (
-                    <div className="section-note">{t.cookiesOff}</div>
-                  )}
-                </div>
-                <button
-                  className="ghost"
-                  onClick={() => {
-                    localStorage.removeItem(STORAGE_KEYS.consent);
-                    localStorage.removeItem(STORAGE_KEYS.onboarded);
-                    localStorage.removeItem(STORAGE_KEYS.settings);
-                    localStorage.removeItem(STORAGE_KEYS.session);
-                    window.location.reload();
-                  }}
-                >
-                  Reset cookies & memory
-                </button>
-                <button
-                  className="ghost"
-                  onClick={() => {
-                    localStorage.removeItem(STORAGE_KEYS.session);
-                    setRawText("");
-                    setWords([]);
-                    setCurrentIndex(0);
-                    setFileName(null);
-                  }}
-                >
-                  {t.clearSession}
-                </button>
-              </div>
-
-              <div className="settings-section">
-                <div className="section-title">{t.musicTitle}</div>
-                <div className="button-row">
-                  <button className="ghost" onClick={() => setMuteState(!isMuted)}>
-                    {isMuted ? t.unmute : t.mute}
-                  </button>
-                </div>
-                <div className="section-note">
-                  <a href={MUSIC_CREDIT_URL} target="_blank" rel="noreferrer">
-                    {t.musicCredit}
-                  </a>
-                </div>
-              </div>
-
-              <div className="settings-section">
-                <div className="section-title">{t.shortcuts}</div>
-                <div className="section-note">{t.shortcutsText}</div>
-              </div>
+              </details>
             </div>
           </div>
         </div>

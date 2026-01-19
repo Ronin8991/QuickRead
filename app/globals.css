@@ -347,19 +347,52 @@ select {
   margin-bottom: 18px;
 }
 
-.settings-grid {
+.settings-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  gap: 16px;
+  gap: 12px;
 }
 
 .settings-section {
   border: 1px solid var(--panel-border);
   border-radius: 16px;
-  padding: 14px 16px;
+  padding: 12px 14px;
+  display: grid;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.settings-section[open] {
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.section-summary {
+  list-style: none;
+  cursor: pointer;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.section-summary::-webkit-details-marker {
+  display: none;
+}
+
+.section-summary::after {
+  content: "+";
+  font-size: 18px;
+  opacity: 0.7;
+}
+
+.settings-section[open] .section-summary::after {
+  content: "–";
+}
+
+.section-body {
   display: grid;
   gap: 10px;
-  background: rgba(255, 255, 255, 0.35);
 }
 
 .section-title {
