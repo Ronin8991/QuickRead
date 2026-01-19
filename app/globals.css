@@ -197,7 +197,6 @@ select {
 
 .progress-track {
   position: absolute;
-  bottom: 8%;
   left: 50%;
   transform: translateX(-50%);
   width: min(360px, 70vw);
@@ -205,6 +204,10 @@ select {
   border-radius: 999px;
   background: rgba(0, 0, 0, 0.08);
   overflow: hidden;
+}
+
+.progress-track-global {
+  bottom: 6px;
 }
 
 .progress-fill {

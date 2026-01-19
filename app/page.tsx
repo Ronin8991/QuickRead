@@ -939,9 +939,6 @@ export default function Home() {
             <span className="reader-pivot">{pivot}</span>
             <span className="reader-right">{right}</span>
           </span>
-          <div className="progress-track" aria-hidden="true">
-            <div className="progress-fill" style={{ width: `${percent}%` }} />
-          </div>
           {hasSession && !isPlaying && (
             <button
               className="resume-button"
@@ -965,6 +962,9 @@ export default function Home() {
               <button className="handle handle-sw" data-dir="sw" onPointerDown={startResize} />
             </div>
           )}
+        </div>
+        <div className="progress-track progress-track-global" aria-hidden="true">
+          <div className="progress-fill" style={{ width: `${percent}%` }} />
         </div>
       </section>
 
