@@ -468,11 +468,12 @@ export default function Home() {
     const updateFont = () => {
       if (!boxRef.current || !wordRef.current) return;
       const boxWidth = boxRef.current.clientWidth;
-      if (!boxWidth) return;
+      const boxHeight = boxRef.current.clientHeight;
+      if (!boxWidth || !boxHeight) return;
 
       const basePx = Math.min(
-        Math.max(window.innerWidth * (wordScale / 100), 40),
-        150
+        Math.max(window.innerWidth * (wordScale / 100), 32),
+        160
       );
       const style = window.getComputedStyle(wordRef.current);
       const font = `${style.fontWeight} ${basePx}px ${style.fontFamily}`;
@@ -481,9 +482,11 @@ export default function Home() {
       if (!ctx) return;
       ctx.font = font;
       const wordWidth = ctx.measureText(displayWord).width || 1;
-      const available = boxWidth * 0.9;
+      const available = boxWidth * 0.88;
       const scale = Math.min(1, available / wordWidth);
-      setWordFontPx(Math.max(24, Math.floor(basePx * scale)));
+      const sizeFromWidth = Math.floor(basePx * scale);
+      const sizeFromHeight = Math.floor(boxHeight * 0.7);
+      setWordFontPx(Math.max(20, Math.min(sizeFromWidth, sizeFromHeight)));
     };
 
     updateFont();

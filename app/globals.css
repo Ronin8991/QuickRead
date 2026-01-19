@@ -197,7 +197,7 @@ select {
 
 .progress-track {
   position: absolute;
-  bottom: 14%;
+  bottom: 8%;
   left: 50%;
   transform: translateX(-50%);
   width: min(360px, 70vw);
