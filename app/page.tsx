@@ -39,6 +39,7 @@ type SavedSettings = {
   lang: Lang;
   isMuted: boolean;
   demoText?: { en: string; it: string };
+  boxSize?: { width: number; height: number };
 };
 
 type SavedSession = {
@@ -108,6 +109,9 @@ const STRINGS = {
       controlTitle: "Play & pause",
       controlBody:
         "On desktop press the spacebar. On mobile, tap the reading area to play or pause.",
+      boxTitle: "Adjust the reading box",
+      boxBody:
+        "Drag the box borders to match your screen. A tighter frame can improve focus and reduce eye travel.",
       rotateTitle: "Rotate your screen",
       rotateBody: "On phones, rotate your screen horizontally for the best reading flow.",
       loadTitle: "Load a file",
@@ -171,6 +175,9 @@ const STRINGS = {
       controlTitle: "Play & pausa",
       controlBody:
         "Su desktop premi la barra spaziatrice. Su mobile tocca l’area di lettura per avviare o mettere in pausa.",
+      boxTitle: "Regola il riquadro di lettura",
+      boxBody:
+        "Trascina i bordi del riquadro per adattarlo al tuo schermo. Un frame più stretto può migliorare la concentrazione.",
       rotateTitle: "Ruota lo schermo",
       rotateBody: "Su mobile, ruota lo schermo in orizzontale per una lettura migliore.",
       loadTitle: "Carica un file",
@@ -308,10 +315,21 @@ export default function Home() {
     en: DEMO_TEXT.en,
     it: DEMO_TEXT.it
   });
+  const [boxSize, setBoxSize] = useState({ width: 70, height: 60 });
+  const [isAdjustingBox, setIsAdjustingBox] = useState(false);
+  const [wordFontPx, setWordFontPx] = useState(72);
 
   const wordRef = useRef<HTMLSpanElement | null>(null);
+  const boxRef = useRef<HTMLDivElement | null>(null);
   const timerRef = useRef<number | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const resizeRef = useRef<{
+    dir: string;
+    startX: number;
+    startY: number;
+    startWidth: number;
+    startHeight: number;
+  } | null>(null);
 
   const t = STRINGS[lang];
   const displayWord = words[currentIndex] ?? "";
@@ -396,6 +414,94 @@ export default function Home() {
   }, [theme]);
 
   useEffect(() => {
+    const handleMove = (event: PointerEvent) => {
+      if (!resizeRef.current) return;
+      const { dir, startX, startY, startWidth, startHeight } = resizeRef.current;
+      const dx = ((event.clientX - startX) / window.innerWidth) * 100;
+      const dy = ((event.clientY - startY) / window.innerHeight) * 100;
+
+      setBoxSize((prev) => {
+        let width = startWidth;
+        let height = startHeight;
+
+        if (dir.includes("e")) width = startWidth + dx;
+        if (dir.includes("w")) width = startWidth - dx;
+        if (dir.includes("s")) height = startHeight + dy;
+        if (dir.includes("n")) height = startHeight - dy;
+
+        return {
+          width: Math.min(Math.max(width, 40), 100),
+          height: Math.min(Math.max(height, 35), 100)
+        };
+      });
+    };
+
+    const handleUp = () => {
+      resizeRef.current = null;
+      window.removeEventListener("pointermove", handleMove);
+      window.removeEventListener("pointerup", handleUp);
+    };
+
+    if (!isAdjustingBox) return;
+
+    const handleDown = (event: PointerEvent) => {
+      const target = event.target as HTMLElement;
+      const dir = target?.dataset?.dir;
+      if (!dir) return;
+      event.preventDefault();
+      resizeRef.current = {
+        dir,
+        startX: event.clientX,
+        startY: event.clientY,
+        startWidth: boxSize.width,
+        startHeight: boxSize.height
+      };
+      window.addEventListener("pointermove", handleMove);
+      window.addEventListener("pointerup", handleUp);
+    };
+
+    const box = boxRef.current;
+    if (box) {
+      box.addEventListener("pointerdown", handleDown);
+    }
+
+    return () => {
+      if (box) {
+        box.removeEventListener("pointerdown", handleDown);
+      }
+      window.removeEventListener("pointermove", handleMove);
+      window.removeEventListener("pointerup", handleUp);
+    };
+  }, [isAdjustingBox, boxSize.width, boxSize.height]);
+
+  useEffect(() => {
+    const updateFont = () => {
+      if (!boxRef.current || !wordRef.current) return;
+      const boxWidth = boxRef.current.clientWidth;
+      if (!boxWidth) return;
+
+      const basePx = Math.min(
+        Math.max(window.innerWidth * (wordScale / 100), 40),
+        150
+      );
+      const style = window.getComputedStyle(wordRef.current);
+      const font = `${style.fontWeight} ${basePx}px ${style.fontFamily}`;
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+      ctx.font = font;
+      const wordWidth = ctx.measureText(displayWord).width || 1;
+      const available = boxWidth * 0.9;
+      const scale = Math.min(1, available / wordWidth);
+      setWordFontPx(Math.max(24, Math.floor(basePx * scale)));
+    };
+
+    updateFont();
+    window.addEventListener("resize", updateFont);
+    return () => window.removeEventListener("resize", updateFont);
+  }, [displayWord, wordScale, boxSize.width, boxSize.height]);
+
+  useEffect(() => {
     if (!audioRef.current) return;
     audioRef.current.muted = isMuted;
   }, [isMuted]);
@@ -427,6 +533,12 @@ export default function Home() {
             setDemoText({
               en: parsed.demoText.en ?? DEMO_TEXT.en,
               it: parsed.demoText.it ?? DEMO_TEXT.it
+            });
+          }
+          if (parsed.boxSize) {
+            setBoxSize({
+              width: parsed.boxSize.width ?? 70,
+              height: parsed.boxSize.height ?? 60
             });
           }
         }
@@ -461,10 +573,11 @@ export default function Home() {
       theme,
       lang,
       isMuted,
-      demoText
+      demoText,
+      boxSize
     };
     localStorage.setItem(STORAGE_KEYS.settings, JSON.stringify(payload));
-  }, [consent, wpm, pivotMode, fixedPivot, wordScale, theme, lang, isMuted, demoText]);
+  }, [consent, wpm, pivotMode, fixedPivot, wordScale, theme, lang, isMuted, demoText, boxSize]);
 
   useEffect(() => {
     if (consent !== "granted") return;
@@ -570,7 +683,7 @@ export default function Home() {
   };
 
   const goNext = () => {
-    setOnboardingStep((prev) => Math.min(prev + 1, 6));
+    setOnboardingStep((prev) => Math.min(prev + 1, 7));
   };
 
   const goPrev = () => {
@@ -684,6 +797,18 @@ export default function Home() {
 
           {onboardingStep === 5 && (
             <div className="slide">
+              <h2>{t.onboarding.boxTitle}</h2>
+              <p>{t.onboarding.boxBody}</p>
+              <div className="slide-actions">
+                <button className="primary" onClick={goNext}>
+                  {t.onboarding.continue}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {onboardingStep === 6 && (
+            <div className="slide">
               <h2>{t.onboarding.rotateTitle}</h2>
               <p>{t.onboarding.rotateBody}</p>
               <div className="slide-actions">
@@ -694,7 +819,7 @@ export default function Home() {
             </div>
           )}
 
-          {onboardingStep === 6 && (
+          {onboardingStep === 7 && (
             <div className="slide">
               <h2>{t.onboarding.loadTitle}</h2>
               <p>{t.onboarding.loadBody}</p>
@@ -793,37 +918,59 @@ export default function Home() {
         </div>
       </header>
 
-      <section
-        className="reader-stage"
-        style={{ ["--word-scale" as any]: `${wordScale}vw` }}
-        onClick={togglePlay}
-        role="button"
-        aria-label={isPlaying ? t.pause : t.play}
-      >
-        <div className="reader-line" aria-hidden="true" />
-        <span
-          ref={wordRef}
-          className="reader-word"
-          style={{ transform: `translateX(${-pivotOffset}px)` }}
+      <section className="reader-stage">
+        <div
+          ref={boxRef}
+          className={`reader-box ${isAdjustingBox ? "resizing" : ""}`}
+          style={{
+            width: `${boxSize.width}vw`,
+            height: `${boxSize.height}vh`,
+            ["--word-scale" as any]: `${wordScale}vw`
+          }}
+          onClick={togglePlay}
+          role="button"
+          aria-label={isPlaying ? t.pause : t.play}
         >
-          <span className="reader-left">{left}</span>
-          <span className="reader-pivot">{pivot}</span>
-          <span className="reader-right">{right}</span>
-        </span>
-        <div className="progress-track" aria-hidden="true">
-          <div className="progress-fill" style={{ width: `${percent}%` }} />
-        </div>
-        {hasSession && !isPlaying && (
-          <button
-            className="resume-button"
-            onClick={(event) => {
-              event.stopPropagation();
-              togglePlay();
+          <div className="reader-line" aria-hidden="true" />
+          <span
+            ref={wordRef}
+            className="reader-word"
+            style={{
+              transform: `translateX(${-pivotOffset}px)`,
+              fontSize: `${wordFontPx}px`
             }}
           >
-            {t.play}
-          </button>
-        )}
+            <span className="reader-left">{left}</span>
+            <span className="reader-pivot">{pivot}</span>
+            <span className="reader-right">{right}</span>
+          </span>
+          <div className="progress-track" aria-hidden="true">
+            <div className="progress-fill" style={{ width: `${percent}%` }} />
+          </div>
+          {hasSession && !isPlaying && (
+            <button
+              className="resume-button"
+              onClick={(event) => {
+                event.stopPropagation();
+                togglePlay();
+              }}
+            >
+              {t.play}
+            </button>
+          )}
+          {isAdjustingBox && (
+            <div className="handle-layer" aria-hidden="true">
+              <button className="handle handle-n" data-dir="n" />
+              <button className="handle handle-s" data-dir="s" />
+              <button className="handle handle-e" data-dir="e" />
+              <button className="handle handle-w" data-dir="w" />
+              <button className="handle handle-ne" data-dir="ne" />
+              <button className="handle handle-nw" data-dir="nw" />
+              <button className="handle handle-se" data-dir="se" />
+              <button className="handle handle-sw" data-dir="sw" />
+            </div>
+          )}
+        </div>
       </section>
 
       <footer className="signature">
@@ -973,6 +1120,65 @@ export default function Home() {
                   >
                     Italiano
                   </button>
+                </div>
+              </div>
+
+              <div className="settings-section">
+                <div className="section-title">Reading box</div>
+                <div className="setting">
+                  <label>Resize box</label>
+                  <div className="button-row">
+                    <button
+                      className={isAdjustingBox ? "primary" : "ghost"}
+                      onClick={() => setIsAdjustingBox((prev) => !prev)}
+                    >
+                      {isAdjustingBox ? "Done" : "Adjust"}
+                    </button>
+                    <button
+                      className="ghost"
+                      onClick={() => setBoxSize({ width: 70, height: 60 })}
+                    >
+                      Reset
+                    </button>
+                  </div>
+                  <div className="section-note">
+                    Drag the borders of the box on the main screen to fit your
+                    device.
+                  </div>
+                </div>
+                <div className="setting">
+                  <label htmlFor="boxWidth">Width</label>
+                  <input
+                    id="boxWidth"
+                    type="range"
+                    min={40}
+                    max={100}
+                    value={boxSize.width}
+                    onChange={(event) =>
+                      setBoxSize((prev) => ({
+                        ...prev,
+                        width: Number(event.target.value)
+                      }))
+                    }
+                  />
+                  <div className="setting-value">{boxSize.width} vw</div>
+                </div>
+                <div className="setting">
+                  <label htmlFor="boxHeight">Height</label>
+                  <input
+                    id="boxHeight"
+                    type="range"
+                    min={35}
+                    max={100}
+                    value={boxSize.height}
+                    onChange={(event) =>
+                      setBoxSize((prev) => ({
+                        ...prev,
+                        height: Number(event.target.value)
+                      }))
+                    }
+                  />
+                  <div className="setting-value">{boxSize.height} vh</div>
                 </div>
               </div>
 
